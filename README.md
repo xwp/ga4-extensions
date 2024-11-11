@@ -38,11 +38,11 @@ To use the custom data in Google Analytics 4, you need to create custom events a
 3. Access the Admin Panel - Click the Admin gear icon located in the bottom-left corner of the interface.
 4. In the *Data display* section, click on `Custom definitions`.
 5. For each custom dimension (post_author, post_category, post_tags), follow these steps:
-  a. Click Create Custom Dimension.
-  b. Dimension Name: Post XXX (e.g., Post Author)
-  c. Scope: Event
-  d. Event Parameter: post_author
-  e. Click Save.
+    * Click Create Custom Dimension.
+    * Dimension Name: Post XXX (e.g., Post Author)
+    * Scope: Event
+    * Event Parameter: post_xxx (e.g., post_author)
+    * Click Save.
 
 ## Requirements
 
