@@ -22,7 +22,5 @@ function ga4_ext_init() {
 
 	// Outputs the GA4 tag.
 	require_once plugin_dir_path( __FILE__ ) . 'includes/ga4-tag.php';
-	// Expose the extra custom data.
-	require_once plugin_dir_path( __FILE__ ) . 'includes/ga4-ext-data.php';
 }
 add_action( 'plugins_loaded', 'ga4_ext_init' );

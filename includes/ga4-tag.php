@@ -48,7 +48,7 @@ function ga4_ext_sanitize_measurement_id( $input ) {
 		return strtoupper( trim( $input ) );
 	}
 
-	// Invalid, reset to the empty string.
+	// Invalid, reset back to the empty string.
 	return '';
 }
 
@@ -75,7 +75,102 @@ function ga4_ext_render_measurement_id_field( $args ) {
 }
 
 /**
- * Enqueue the GA4 scripts in the footer.
+ * Retrieves the post author's username.
+ *
+ * @return string Author username or empty string.
+ */
+function ga4_ext_get_post_author() {
+	if ( ! is_single() ) {
+		return '';
+	}
+
+	global $post;
+
+	if ( ! $post ) {
+		return '';
+	}
+
+	$post_author = get_userdata( $post->post_author );
+
+	return $post_author ? $post_author->user_login : 'unknown';
+}
+
+/**
+ * Retrieves the post categories as a space-separated string.
+ *
+ * @return string Categories or empty string.
+ */
+function ga4_ext_get_post_category() {
+	if ( ! is_single() ) {
+		return '';
+	}
+
+	global $post;
+
+	if ( ! $post ) {
+		return '';
+	}
+
+	$terms = get_the_terms( $post->ID, 'category' );
+
+	if ( ! $terms || is_wp_error( $terms ) ) {
+		return 'uncategorized';
+	}
+
+	$term_slugs = wp_list_pluck( $terms, 'slug' );
+
+	return trim( implode( ' ', $term_slugs ) );
+}
+
+/**
+ * Retrieves the post tags as a space-separated string.
+ *
+ * @return string Tags or empty string.
+ */
+function ga4_ext_get_post_tags() {
+	if ( ! is_single() ) {
+		return '';
+	}
+
+	global $post;
+
+	if ( ! $post ) {
+		return '';
+	}
+
+	$terms = get_the_terms( $post->ID, 'post_tag' );
+
+	if ( ! $terms || is_wp_error( $terms ) ) {
+		return '';
+	}
+
+	$term_slugs = wp_list_pluck( $terms, 'slug' );
+
+	return trim( implode( ' ', $term_slugs ) );
+}
+
+/**
+ * Is the current user a subscriber?
+ *
+ * @return int
+ */
+function ga4_ext_is_subscriber(): int {
+	if ( is_user_logged_in() ) {
+		$user = wp_get_current_user();
+
+		if (
+			$user instanceof WP_User
+			&& in_array( 'subscriber', (array) $user->roles, true )
+		) {
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+/**
+ * Enqueue the GA4 scripts.
  */
 function ga4_ext_enqueue_ga4_scripts() {
 	$measurement_id = get_option( 'ga4_measurement_id', '' );
@@ -93,7 +188,7 @@ function ga4_ext_enqueue_ga4_scripts() {
 		return;
 	}
 
-	// Enqueue the gtag script deferred, in the future.
+	// Enqueue the gtag script deferred.
 	wp_register_script(
 		'ga4-ext-gtagjs',
 		'https://www.googletagmanager.com/gtag/js?id=' . esc_attr( $measurement_id ),
@@ -105,14 +200,28 @@ function ga4_ext_enqueue_ga4_scripts() {
 		]
 	);
 
-	// Added before, as it's the only supported inline script by the defer strategy.
+	$data = [];
+	if ( is_single() ) {
+		$post_author   = ga4_ext_get_post_author();
+		$post_category = ga4_ext_get_post_category();
+		$post_tags     = ga4_ext_get_post_tags();
+
+		$data['post_author']   = $post_author;
+		$data['post_category'] = $post_category;
+		$data['post_tags']     = $post_tags;
+	}
+
+	$is_subscriber = ga4_ext_is_subscriber();
+
+	// Added before, as it's the only type of supported inline script by the defer strategy.
 	wp_add_inline_script(
 		'ga4-ext-gtagjs',
 		'window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag("set", "linker", { "domains": ' . wp_json_encode( [ $domain ] ) . ' });
-gtag("js", new Date());
-gtag("config", "' . esc_attr( $measurement_id ) . '");',
+gtag("js", new Date() );
+gtag("config", "' . esc_attr( $measurement_id ) . '", ' . wp_json_encode( $data ) . ');
+gtag("set", "user_properties", { is_subscriber: ' . esc_attr( $is_subscriber ) . ' } );',
 		'before'
 	);
 	wp_enqueue_script( 'ga4-ext-gtagjs' );

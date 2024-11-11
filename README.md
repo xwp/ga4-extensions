@@ -1,29 +1,41 @@
 # Google Analytics 4 Extensions
 
-> Extends Google Analytics 4 by injecting custom data into the `window.dataLayer` for enhanced GA4 analytics.
+> Extends Google Analytics 4 by including custom data for enhanced GA4 analytics.
 
 ## Features
 
-- **User Properties:** Outputs `user_properties` with `is_subscriber` (0 or 1) on all pages.
+- **User Properties:** Sets `user_properties` with `is_subscriber` (0 or 1) on all pages.
 - **Post Data:** On single post pages, outputs `post_author`, `post_category`, and `post_tags` to the `window.dataLayer`.
-- **Early Script Injection:** Injects the `dataLayer.push` script early in the `<head>` section to ensure GA4 captures the data.
 
 ## Usage
-
-Once activated, the plugin automatically injects the necessary `dataLayer.push` scripts into your site's `<head>`. On all pages, it adds the `user_properties` field, and on single post pages, it additionally adds `post_author`, `post_category`, and `post_tags`.
 
 Example code output:
 
 ```html
-<script id="ga4-ext-data-layer-js-before">
-window.dataLayer = window.dataLayer || [];
-window.dataLayer.push({"user_properties":{"is_subscriber":0},"post_author":"dev","post_category":"fashion travel","post_tags":"featured"});
+<script id="ga4-ext-gtagjs-js-before">
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag("set", "linker", {
+        "domains": ["example.com"]
+    });
+    gtag("js", new Date());
+    gtag("config", "G-1234", {
+        "post_author": "dev",
+        "post_category": "news",
+        "post_tags": "featured"
+    });
+    gtag("set", "user_properties", {
+        is_subscriber: 0
+    });
 </script>
+<script src="https://www.googletagmanager.com/gtag/js?id=G-1234" id="ga4-ext-gtagjs-js" defer data-wp-strategy="defer"></script>
 ```
 
 ## Configuration
 
-If you don't already have GA4 tracking, you can enable it by following these steps:
+To enable GA4 tracking, follow these steps:
 
 - In your WordPress dashboard, go to **Settings** > **General**.
 - Input your GA4 ID (e.g., `G-1234567`) into the **Google Analytics 4 ID** field.
@@ -38,11 +50,11 @@ To use the custom data in Google Analytics 4, you need to create custom events a
 3. Access the Admin Panel - Click the Admin gear icon located in the bottom-left corner of the interface.
 4. In the *Data display* section, click on `Custom definitions`.
 5. For each custom dimension (post_author, post_category, post_tags), follow these steps:
-    * Click Create Custom Dimension.
-    * Dimension Name: Post XXX (e.g., Post Author)
-    * Scope: Event
-    * Event Parameter: post_xxx (e.g., post_author)
-    * Click Save.
+  a. Click Create Custom Dimension.
+  b. Dimension Name: Post XXX (e.g., Post Author)
+  c. Scope: Event
+  d. Event Parameter: post_author
+  e. Click Save.
 
 ## Requirements
 
