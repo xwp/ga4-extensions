@@ -6,7 +6,7 @@
 
 - **User Properties:** Outputs `user_properties` with `is_subscriber` (0 or 1) on all pages.
 - **Post Data:** On single post pages, outputs `post_author`, `post_category`, and `post_tags` to the `window.dataLayer`.
-- **Early Script Injection:** Injects the `dataLayer.push` script early in the `<head>` section to ensure Google Site Kit GA4 captures the data.
+- **Early Script Injection:** Injects the `dataLayer.push` script early in the `<head>` section to ensure GA4 captures the data.
 
 ## Usage
 
