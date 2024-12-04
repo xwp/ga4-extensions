@@ -220,12 +220,12 @@ function ga4_ext_enqueue_ga4_scripts() {
 function gtag(){dataLayer.push(arguments);}
 gtag("set", "linker", { "domains": ' . wp_json_encode( [ $domain ] ) . ' });
 gtag("js", new Date() );
-gtag("config", "' . esc_attr( $measurement_id ) . '", ' . wp_json_encode( $data ) . ');
-gtag("set", "user_properties", { is_subscriber: ' . esc_attr( $is_subscriber ) . ' } );',
+gtag("config", ' . wp_json_encode( $measurement_id ) . ', ' . ( ! empty( $data ) ? wp_json_encode( $data ) : '{}' ) . ');
+gtag("set", "user_properties", { is_subscriber: ' . wp_json_encode( $is_subscriber ) . ' } );',
 		'before'
 	);
 	wp_enqueue_script( 'ga4-ext-gtagjs' );
 }
 
 add_action( 'admin_init', 'ga4_ext_register_settings' );
-add_action( 'wp_footer', 'ga4_ext_enqueue_ga4_scripts' );
+add_action( 'wp_enqueue_scripts', 'ga4_ext_enqueue_ga4_scripts' );
