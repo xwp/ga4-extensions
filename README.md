@@ -33,6 +33,46 @@ Example code output:
 <script src="https://www.googletagmanager.com/gtag/js?id=G-1234" id="ga4-ext-gtagjs-js" defer data-wp-strategy="defer"></script>
 ```
 
+## Installation
+
+### Using Composer
+
+To install the plugin via Composer, follow these steps:
+
+1. **Add the Repository:**
+   - Open your project's `composer.json` file.
+   - Add the following under the `repositories` section:
+
+     ```json
+     "repositories": [
+         {
+             "type": "vcs",
+             "url": "https://github.com/xwp/ga4-extensions"
+         }
+     ]
+     ```
+
+2. **Require the Plugin:**
+   - Run the following command in your terminal:
+
+     ```bash
+     composer require xwp/ga4-extensions
+     ```
+
+3. **Activate the Plugin:**
+   - Once installed, activate the plugin through the 'Plugins' menu in WordPress.
+
+### Manual Installation
+
+1. **Download the Plugin:**
+   - Download the `ga4-extensions` plugin folder.
+
+2. **Upload the Plugin:**
+   - Add the `ga4-extensions` folder to the `/wp-content/plugins/` directory of your WordPress installation.
+
+3. **Activate the Plugin:**
+   - Activate the plugin through the 'Plugins' menu in WordPress.
+
 ## Configuration
 
 To enable GA4 tracking, follow these steps:
