@@ -5,7 +5,7 @@
 ## Features
 
 - **User Properties:** Sets `user_properties` with `is_subscriber` (0 or 1) on all pages.
-- **Post Data:** On single post pages, outputs `post_author`, `post_category`, and `post_tags` to the `window.dataLayer`.
+- **Post Data:** On single post pages, outputs `post_author`, `post_category`, and `post_tags`.
 
 ## Usage
 
